@@ -1,0 +1,56 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MediaHub Ad Portal</title>
+<style>
+body{margin:0;background:#0b0f14;color:#e6edf3;font-family:Inter,sans-serif;display:grid;place-items:center;min-height:100vh;padding:32px}
+.card{width:min(900px,100%);background:#111824;border:1px solid #253043;border-radius:16px;box-shadow:0 10px 30px #000a;overflow:hidden}
+header{padding:24px;text-align:center;border-bottom:1px solid #1f2a3c;background:#121b2a}
+form{display:grid;gap:18px;padding:24px}
+.field{background:#0c1320;border:1px solid #253043;border-radius:12px;padding:10px 12px}
+input,select,textarea{width:100%;background:transparent;border:0;outline:0;color:#e6edf3;font-size:15px}
+textarea{min-height:100px}
+.grid{display:grid;gap:16px}
+.grid.two{grid-template-columns:1fr 1fr}
+button{border:0;border-radius:10px;padding:12px 18px;font-weight:700;cursor:pointer;color:white;background:linear-gradient(180deg,#3d79ff,#2b63e8)}
+.toast{position:fixed;right:24px;bottom:24px;background:#0f1726;border:1px solid #2a3954;border-radius:12px;padding:14px 16px;opacity:0;pointer-events:none;transform:translateY(8px);transition:.25s}
+.toast.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+</style>
+</head>
+<body>
+<div class="card">
+<header><h1>MediaHub â€” Ad Request Portal</h1></header>
+<form id="adForm">
+<div class="grid two">
+<div><label>Client Name*</label><div class="field"><input name="clientName" required /></div></div>
+<div><label>Campaign Name*</label><div class="field"><input name="campaignName" required /></div></div>
+</div>
+<div class="grid two">
+<div><label>Platform*</label><div class="field"><select name="platform" required><option>Meta</option><option>TikTok</option><option>Google</option></select></div></div>
+<div><label>Ad Type*</label><div class="field"><select name="adType" required><option>Video</option><option>Image</option><option>Carousel</option></select></div></div>
+</div>
+<div><label>Creative Link*</label><div class="field"><input name="creativeLinks" required placeholder="https://..." /></div></div>
+<div><label>Budget (USD)*</label><div class="field"><input type="number" name="budget" required /></div></div>
+<div class="grid two">
+<div><label>Gender*</label><div class="field"><select name="gender" required><option>All</option><option>Male</option><option>Female</option></select></div></div>
+<div><label>Age Range*</label><div class="field"><select name="ageRange" required><option>18-24</option><option>25-34</option><option>35-44</option><option>45+</option></select></div></div>
+</div>
+<div><label>Location*</label><div class="field"><input name="location" required /></div></div>
+<div><label>Objective</label><div class="field"><select name="objective"><option>Traffic</option><option>Leads</option><option>Sales</option></select></div></div>
+<div><label>Ad Copy</label><div class="field"><textarea name="adCopy"></textarea></div></div>
+<button type="submit">Submit Request</button>
+</form>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbwm6K_pxoW5tfD0TJToIULNKGpK3UMRzvGGmW1ILKWVJENWCJX-BGFJwyYWdjtnzr5-/exec";
+const toast=document.getElementById('toast');function showToast(m){toast.innerText=m;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3500)}
+document.getElementById('adForm').onsubmit=async e=>{
+e.preventDefault();const f=e.target;const data=Object.fromEntries(new FormData(f).entries());data.timestamp=new Date().toISOString();
+try{const r=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const j=await r.json();
+if(j.ok){showToast('âœ… Request sent!');f.reset();}else showToast('âš ï¸ '+j.error);}catch{showToast('âŒ Connection failed')}}
+</script>
+</body>
+</html>
